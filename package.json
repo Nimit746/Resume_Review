@@ -1,0 +1,36 @@
+{
+    "name": "resume-review-ai",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Production-ready Resume Reviewer AI using Next.js + FastAPI",
+    "scripts": {
+        "dev": "concurrently \"npm:frontend\" \"npm:ai\"",
+        "frontend": "cd client && npm run dev",
+        "frontend:build": "cd client && npm run build",
+        "frontend:start": "cd client && npm run start",
+        "ai": "cd server && uv run uvicorn main:app --reload",
+        "ai:prod": "cd server && uv run gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000",
+        "ai:win-prod": "cd server && uv run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4",
+        "install:all": "npm install && cd client && npm install && cd ../server && uv sync"
+    },
+    "devDependencies": {
+        "concurrently": "^9.0.0",
+        "nodemon": "^3.1.0"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=9.0.0"
+    },
+    "keywords": [
+        "AI",
+        "FastAPI",
+        "Next.js",
+        "RAG",
+        "Resume",
+        "Reviewer",
+        "Pinecone",
+        "Cloudinary"
+    ],
+    "author": "Nimit Gupta",
+    "license": "MIT"
+}
