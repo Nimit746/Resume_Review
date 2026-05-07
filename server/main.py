@@ -90,6 +90,7 @@ app.router.lifespan_context = lifespan
 # ---------- Routes ----------
 
 @app.get("/health")
+@app.head("/health")
 @limiter.limit("5/minute")
 async def health(request: Request):
     return {
