@@ -4,6 +4,7 @@ import { Zap, Shield, Star, ArrowRight, Sparkles, Trophy, Users } from "lucide-r
 import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import MobileMenu from "@/components/shared/MobileMenu";
+import DashboardPreview from "@/components/landing/DashboardPreview";
 
 export default function LandingPage() {
   return (
@@ -54,14 +55,7 @@ export default function LandingPage() {
             </div>
 
             {/* Dashboard Preview */}
-            <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-r from-[#FF6B00]/20 to-orange-300/20 rounded-[3rem] blur-2xl opacity-50"></div>
-              <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-[12px] border-white bg-gray-50">
-                <div className="w-full h-96 bg-gray-100 flex items-center justify-center">
-                   <p className="text-gray-400 font-bold italic">Application Preview Dashboard</p>
-                </div>
-              </div>
-            </div>
+            <DashboardPreview />
           </div>
         </div>
       </section>
