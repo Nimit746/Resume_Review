@@ -1,34 +1,30 @@
-"use client";
-
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
-import { usePathname } from "next/navigation";
+import LayoutProvider from "@/components/shared/LayoutProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({ children }) {
-  const pathname = usePathname();
-  
-  // Dashboard and Auth pages have their own navigation structure
-  const isApp = pathname.startsWith("/dashboard") || 
-                pathname.startsWith("/editor") || 
-                pathname.startsWith("/ats-checker") || 
-                pathname.startsWith("/cover-letter") || 
-                pathname.startsWith("/qa");
-                
-  const isStandalone = isApp || pathname.startsWith("/resume") || pathname.startsWith("/auth");
+export const metadata = {
+  title: "ResumeForge | AI-Powered Resume Builder",
+  description: "Build premium, ATS-friendly resumes in minutes with AI.",
+  icons: {
+    icon: [
+      { url: "/favicon_io/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon_io/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/favicon_io/apple-touch-icon.png",
+  },
+};
 
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        {!isStandalone && <Navbar />}
-        <main className={!isStandalone ? "pt-16 min-h-screen" : "min-h-screen"}>
+        <LayoutProvider>
           {children}
-        </main>
-        {!isStandalone && <Footer />}
+        </LayoutProvider>
       </body>
     </html>
   );
 }
+

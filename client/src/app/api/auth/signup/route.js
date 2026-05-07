@@ -2,6 +2,7 @@ import dbConnect from "@/lib/mongodb";
 import { User } from "@/lib/models";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 export async function POST(request) {
   try {
@@ -14,8 +15,11 @@ export async function POST(request) {
       return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
-    // Create user (Note: In production, hash the password!)
-    const user = await User.create({ name, email, password });
+    // Hash the password explicitly
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create user
+    const user = await User.create({ name, email, password: hashedPassword });
 
     // Create JWT
     const token = jwt.sign(

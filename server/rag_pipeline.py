@@ -1,6 +1,7 @@
 import asyncio
 from modules import Loader, Splitter, Embed, Store, Model, Prompt, Chain
-
+from modules.utils import extract_text
+import json
 
 class RAGPipeline:
     def __init__(
@@ -10,7 +11,7 @@ class RAGPipeline:
         persist_dir: str = "chroma_db",
         chunk_size: int = 300,
         chunk_overlap: int = 60,
-        model_name: str = "openai/gpt-oss-20b",
+        model_name: str = "llama-3.1-8b-instant",
         temperature: float = 0.3,
         top_k: int = 3,
     ):
@@ -56,10 +57,15 @@ class RAGPipeline:
 
         # RAG chain — uses retrieved context
         rag_template = (
-            "You are a helpful assistant. Answer the question using only the context below.\n\n"
-            "Context: {context}\n\n"
-            "Question: {question}\n\n"
-            "Answer:"
+            "SYSTEM: You are ResumeForge AI. You must ALWAYS respond in valid JSON format. "
+            "Do not include any text outside the JSON object.\n\n"
+            "RESUME CONTEXT:\n{context}\n\n"
+            "USER QUESTION: {question}\n\n"
+            "RESPONSE FORMAT:\n"
+            "{{\n"
+            "  \"answer\": \"your markdown-formatted response here\"\n"
+            "}}\n\n"
+            "Expert Response (JSON ONLY):"
         )
         rag_prompt = Prompt(
             template=rag_template,
@@ -73,9 +79,14 @@ class RAGPipeline:
         """Lazily build the plain chain (no context) only when needed."""
         if self._plain_chain is None:
             plain_template = (
-                "You are a helpful assistant. Answer the question below.\n\n"
-                "Question: {question}\n\n"
-                "Answer:"
+                "SYSTEM: You are ResumeForge AI. You must ALWAYS respond in valid JSON format. "
+                "Do not include any text outside the JSON object.\n\n"
+                "USER QUESTION: {question}\n\n"
+                "RESPONSE FORMAT:\n"
+                "{{\n"
+                "  \"answer\": \"your markdown-formatted response here\"\n"
+                "}}\n\n"
+                "Expert Response (JSON ONLY):"
             )
             plain_prompt = Prompt(
                 template=plain_template,
@@ -95,6 +106,7 @@ class RAGPipeline:
         """
         Query the pipeline.
         """
+
         if use_rag:
             if self.store is None or self._rag_chain is None:
                 raise RuntimeError(
@@ -106,7 +118,8 @@ class RAGPipeline:
             context = "\n\n".join([doc.page_content for doc in results])
             
             # Chain run is sync, wrap in thread
-            answer = await asyncio.to_thread(self._rag_chain.run, {"context": context, "question": question})
+            result_dict = await asyncio.to_thread(self._rag_chain.run, {"context": context, "question": question})
+            answer = extract_text(result_dict, "answer")
 
             return {
                 "question": question,
@@ -117,11 +130,12 @@ class RAGPipeline:
 
         else:
             plain_chain = self._get_plain_chain()
-            answer = await asyncio.to_thread(plain_chain.run, {"question": question})
+            result_dict = await asyncio.to_thread(plain_chain.run, {"question": question})
+            answer = extract_text(result_dict, "answer")
 
             return {
                 "question": question,
                 "answer": answer,
                 "mode": "llm",
                 "sources": [],
-            }
+            }

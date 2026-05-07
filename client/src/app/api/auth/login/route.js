@@ -10,7 +10,7 @@ export async function POST(request) {
 
     // Find user
     const user = await User.findOne({ email });
-    if (!user || user.password !== password) {
+    if (!user || !(await user.comparePassword(password))) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 

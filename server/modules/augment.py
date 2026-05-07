@@ -1,8 +1,10 @@
 import os
+import json
+import re
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 
 load_dotenv()
 class Model:
@@ -35,7 +37,35 @@ class Prompt:
 
 class Chain:
     def __init__(self, prompt: PromptTemplate, model: ChatGroq):
-        self.chain = prompt | model | StrOutputParser()
+        # We invoke the model directly and handle parsing manually for maximum reliability
+        self.chain = prompt | model
         
-    def run(self, inputs:dict) -> str:
-        return self.chain.invoke(inputs)
+    def run(self, inputs:dict) -> dict:
+        try:
+            # 1. Invoke the model directly to get the raw message
+            response = self.chain.invoke(inputs)
+            content = response.content if hasattr(response, 'content') else str(response)
+            
+            # 2. Extract JSON using Regex
+            # This handles models that talk before/after the JSON block
+            json_match = re.search(r'\{.*\}', content, re.DOTALL)
+            if json_match:
+                try:
+                    return json.loads(json_match.group())
+                except json.JSONDecodeError:
+                    pass
+            
+            # 3. Fallback: if no valid JSON found, wrap the entire text in standard keys
+            # This ensures the frontend doesn't crash even if the AI ignores formatting
+            return {
+                "answer": content,
+                "cover_letter": content,
+                "score": 0,
+                "matching_keywords": [],
+                "missing_keywords": [],
+                "improvements": []
+            }
+            
+        except Exception as e:
+            # Final safety net to prevent 500 errors
+            return {"answer": f"Error: {str(e)}", "cover_letter": f"Error: {str(e)}"}

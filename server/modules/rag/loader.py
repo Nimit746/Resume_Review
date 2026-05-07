@@ -2,7 +2,7 @@ import httpx
 import tempfile
 import os
 import asyncio
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_community.document_loaders import PyPDFLoader, TextLoader, Docx2txtLoader
 from langchain_core.documents import Document
 
 
@@ -43,6 +43,8 @@ class Loader:
             # LangChain loaders are synchronous, so we run them in a thread pool to avoid blocking
             if ext == 'pdf':
                 loader = PyPDFLoader(path)
+            elif ext == 'docx':
+                loader = Docx2txtLoader(path)
             else:
                 loader = TextLoader(path, encoding=self.encoding)
             
