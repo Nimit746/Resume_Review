@@ -5,7 +5,7 @@
     "description": "Production-ready Resume Reviewer AI using Next.js + FastAPI",
     "scripts": {
         "dev": "concurrently \"npm:frontend\" \"npm:ai\"",
-        "frontend": "cd client && npm run dev",
+        "frontend": "cd client && npm install && npm run dev",
         "frontend:build": "cd client && npm run build",
         "frontend:start": "cd client && npm run start",
         "ai": "cd server && uvicorn main:app --reload",
