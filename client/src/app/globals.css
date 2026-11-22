@@ -51,3 +51,14 @@
     --tw-shadow: var(--tw-shadow-colored);
   }
 }
+
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

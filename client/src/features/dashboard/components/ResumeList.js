@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { Card } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { printResume } from "@/lib/utils";
 
 export default function ResumeList({ initialResumes }) {
   const [resumes, setResumes] = useState(initialResumes);
@@ -89,10 +90,15 @@ export default function ResumeList({ initialResumes }) {
               </p>
               <div className="flex justify-between items-center">
                 <div className="flex gap-2">
-                  <Button variant="secondary" size="icon" href={`/editor?id=${resume._id}`}>
+                  <Button variant="secondary" size="icon" href={`/editor?id=${resume._id}`} title="Edit">
                     <Edit3 className="w-4 h-4" />
                   </Button>
-                  <Button variant="secondary" size="icon">
+                  <Button 
+                    variant="secondary" 
+                    size="icon"
+                    onClick={() => printResume(resume.title, resume.data)}
+                    title="Export / Print PDF"
+                  >
                     <Download className="w-4 h-4" />
                   </Button>
                 </div>

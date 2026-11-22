@@ -11,6 +11,7 @@ import PreviewPanel from "./PreviewPanel";
 
 import { useResume } from "@/hooks/useResume";
 import { DEFAULT_RESUME_DATA } from "@/constants/editor";
+import { printResume } from "@/lib/utils";
 
 export default function EditorShell({ user, initialResume }) {
   const {
@@ -45,16 +46,7 @@ export default function EditorShell({ user, initialResume }) {
   const handleSave = () => saveResume();
 
   const handleDownload = () => {
-    const el = document.getElementById("resume-preview");
-    if (!el) { toast.error("Switch to Preview or Split view first."); return; }
-    const w = window.open("", "_blank");
-    w.document.write(`<html><head><title>${resumeTitle}</title>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-      <style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',sans-serif;padding:0;}@media print{body{margin:0;}}</style>
-      </head><body>${el.outerHTML}</body></html>`);
-    w.document.close();
-    w.focus();
-    setTimeout(() => { w.print(); w.close(); }, 500);
+    printResume(resumeTitle, resumeData);
   };
 
   const showEditor  = view === "split" || view === "editor";

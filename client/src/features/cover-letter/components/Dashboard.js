@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Mail, Edit3, Download, Trash2, Sparkles, Wand2, Search } from "lucide-react";
+import { printCoverLetter } from "@/lib/utils";
 
 export default function Dashboard({ 
   coverLetters, 
@@ -52,7 +53,11 @@ export default function Dashboard({
                   >
                     <Edit3 className="w-4 h-4" />
                   </button>
-                  <button className="p-2 bg-gray-50 rounded-xl text-gray-400 hover:text-primary transition-all hover:bg-white border border-transparent hover:border-gray-100">
+                  <button 
+                    onClick={() => printCoverLetter(cl.title || "Cover Letter", cl.content)}
+                    className="p-2 bg-gray-50 rounded-xl text-gray-400 hover:text-primary transition-all hover:bg-white border border-transparent hover:border-gray-100"
+                    title="Export / Download PDF"
+                  >
                     <Download className="w-4 h-4" />
                   </button>
                 </div>

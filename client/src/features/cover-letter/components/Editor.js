@@ -1,6 +1,7 @@
 "use client";
 
-import { Edit3, Copy, Save, Mail } from "lucide-react";
+import { Edit3, Copy, Save, Mail, Download } from "lucide-react";
+import { printCoverLetter } from "@/lib/utils";
 
 export default function Editor({
   generatedContent,
@@ -25,6 +26,14 @@ export default function Editor({
             title="Copy"
           >
             <Copy className="w-4 h-4" />
+          </button>
+          <button 
+            onClick={() => printCoverLetter("Cover Letter", generatedContent)}
+            disabled={!generatedContent}
+            className="p-2.5 bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 rounded-xl text-gray-400 hover:text-primary transition-all shadow-sm disabled:opacity-40"
+            title="Export / Download PDF"
+          >
+            <Download className="w-4 h-4" />
           </button>
           <button 
             onClick={onSave}
